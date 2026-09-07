@@ -15,7 +15,7 @@ class LaravelAssetsManagerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/assets-manager.php', 'assets-manager');
 
         $this->publishes([
-            __DIR__ . '/config/assets-manager.php' => config_path('assets-manager.php'),
+            __DIR__ . '/../config/assets-manager.php' => config_path('assets-manager.php'),
         ], 'assets-manager');
 
         $this->commands([
