@@ -104,6 +104,11 @@ class AssetsManager
 
         foreach ($outputFiles as $collection => $files) {
             $tagFormat = config("assets-manager.style_tag");
+
+            if(!is_array($tagFormat)) {
+                $tagFormat = [$tagFormat];
+            }
+
             foreach ($files as $file){
                 $output .= sprintf(($tagFormat[$collection] ?? $tagFormat[array_key_first($tagFormat)] ?? $tagFormat), asset(str_replace([public_path(), '\\', '//'], ['', '/'], $file))) . PHP_EOL;
             }
@@ -156,6 +161,10 @@ class AssetsManager
 
         foreach ($outputFiles as $collection => $files) {
             $tagFormat = config("assets-manager.script_tag");
+            if(!is_array($tagFormat)) {
+                $tagFormat = [$tagFormat];
+            }
+
             foreach ($files as $file){
                 $output .= sprintf(($tagFormat[$collection] ?? $tagFormat[array_key_first($tagFormat)] ?? $tagFormat), asset(str_replace([public_path(), '\\', '//'], ['', '/'], $file))) . PHP_EOL;
             }
