@@ -2,13 +2,9 @@
 
 namespace NovinVision\LaravelAssetsManager;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use MatthiasMullie\Minify\CSS;
 use MatthiasMullie\Minify\JS;
-use NovinVision\IRTax\Core\TaxInvoice;
-use NovinVision\IRTax\Core\TaxInvoiceReceipt;
-use NovinVision\IRTax\Drivers\IRTaxDriverConfig;
 
 class AssetsManager
 {

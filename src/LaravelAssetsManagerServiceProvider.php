@@ -1,7 +1,6 @@
 <?php
 namespace NovinVision\LaravelAssetsManager;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelAssetsManagerServiceProvider extends ServiceProvider
