@@ -3,145 +3,160 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/novinvision/laravel-assets-manager.svg)](https://packagist.org/packages/novinvision/laravel-assets-manager)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**Laravel Assets Manager** یک پکیج برای مدیریت، گروه‌بندی و ترکیب فایل‌های CSS و JavaScript در پروژه‌های Laravel است.
+A Laravel package for managing, grouping, combining, and minifying CSS and JavaScript assets based on the current page.
 
-با استفاده از این پکیج می‌توانید فایل‌های CSS و JavaScript مورد نیاز هر صفحه را در Controller یا Blade Component مشخص کنید و سپس فایل‌های مورد نیاز را در View نهایی بارگذاری کنید.
-
-در صورت فعال بودن قابلیت Merge، فایل‌های مربوط به هر گروه نیز می‌توانند با استفاده از [MatthiasMullie Minify](https://github.com/matthiasmullie/minify) ترکیب و Minify شوند.
+**فارسی:** [README-fa.md](README-fa.md)
 
 ---
 
-## نصب
+## Features
 
-پکیج را با Composer نصب کنید:
+- Add CSS and JavaScript assets from Controllers or Blade Components
+- Group assets using a custom group name
+- Combine CSS and JavaScript files
+- Minify assets using [MatthiasMullie Minify](https://github.com/matthiasmullie/minify)
+- Automatically create the required public directories
+- Laravel auto-discovery support
+- Simple Blade helper functions
+
+---
+
+## Requirements
+
+- PHP 8.1 or higher
+- Laravel 10 or higher
+
+---
+
+## Installation
+
+Install the package using Composer:
 
 ```bash
 composer require novinvision/laravel-assets-manager
 ```
 
-سرویس‌پروایدر پکیج به صورت خودکار توسط Laravel شناسایی می‌شود و نیازی به ثبت دستی Provider نیست.
+The service provider is automatically registered by Laravel's package auto-discovery, so no manual registration is required.
 
 ---
 
-## انتشار Configuration
+## Publish Configuration
 
-برای انتشار فایل تنظیمات پکیج، دستور زیر را اجرا کنید:
+To publish the package configuration file, run:
 
 ```bash
 php artisan vendor:publish --tag=assets-manager
 ```
 
-پس از اجرای دستور، فایل زیر در پروژه شما ایجاد خواهد شد:
+This will publish the configuration file to:
 
 ```text
 config/assets-manager.php
 ```
 
-از این فایل می‌توانید تنظیمات مربوط به مدیریت Assetها را تغییر دهید.
-
-> پیشنهاد می‌شود در صورت نیاز به تغییر تنظیمات، ابتدا فایل Configuration را Publish کرده و سپس تنظیمات مورد نظر را در `config/assets-manager.php` انجام دهید.
+You can then customize the package settings from this file.
 
 ---
 
 ## Configuration
 
-فایل تنظیمات پکیج در مسیر زیر قرار دارد:
+After publishing the configuration file, you will have:
 
 ```text
 config/assets-manager.php
 ```
 
-پکیج تنظیمات را با کلید زیر از Configuration دریافت می‌کند:
+The package uses the following configuration key:
 
 ```php
 config('assets-manager')
 ```
 
-دو تنظیم اصلی که توسط سرویس‌پروایدر استفاده می‌شوند عبارت‌اند از:
+### Merge Assets
 
-### فعال کردن Merge
+The `merge` option controls whether assets should be combined and processed.
 
-تنظیم:
+Example:
 
 ```php
 'merge' => true,
 ```
 
-با فعال بودن این گزینه، پکیج پوشه‌های مورد نیاز برای فایل‌های Merge شده را در مسیر عمومی پروژه ایجاد می‌کند.
+When enabled, the package automatically creates the required directories inside the configured public path.
 
-ساختار پوشه‌ها به صورت زیر خواهد بود:
+### Asset Path
 
-```text
-public/
-└── ...
-    ├── css/
-    └── js/
-```
+The `path` option determines where the generated assets are stored inside the `public` directory.
 
-مسیر اصلی این ساختار از مقدار زیر در Configuration خوانده می‌شود:
+For example:
 
 ```php
 'path' => 'assets',
 ```
 
-بنابراین اگر مقدار `path` برابر `assets` باشد، ساختار نهایی به صورت زیر خواهد بود:
+The package will create the following directory structure:
 
 ```text
-public/assets/
-├── css/
-└── js/
+public/
+└── assets/
+    ├── css/
+    └── js/
 ```
 
-پکیج در زمان اجرای Service Provider بررسی می‌کند که این پوشه‌ها وجود داشته باشند و در صورت نبودن، آن‌ها را ایجاد می‌کند.
+If the configured path does not exist, the package creates it automatically.
 
 ---
 
-## اضافه کردن فایل JavaScript
+## Adding JavaScript Assets
 
-برای اضافه کردن یک فایل JavaScript می‌توانید از تابع زیر استفاده کنید:
+You can add a JavaScript file using the `assets_add_js()` helper:
 
 ```php
 assets_add_js(public_path('dist/js/test.js'));
 ```
 
-برای مثال، در یک Controller:
+This can be used inside a Controller or a Blade Component.
+
+For example:
 
 ```php
 public function index()
 {
-    assets_add_js(public_path('dist/js/test.js'));
+    assets_add_js(
+        public_path('dist/js/test.js')
+    );
 
     return view('test.index');
 }
 ```
 
-یا می‌توانید این تابع را مستقیماً در یک Blade Component استفاده کنید.
-
 ---
 
-## اضافه کردن فایل CSS
+## Adding CSS Assets
 
-برای اضافه کردن فایل CSS از تابع زیر استفاده کنید:
+Use the `assets_add_css()` helper to register a CSS file:
 
 ```php
 assets_add_css(public_path('dist/css/test.css'));
 ```
 
-برای مثال:
+For example:
 
 ```php
-assets_add_css(public_path('dist/css/test.css'));
+assets_add_css(
+    public_path('dist/css/test.css')
+);
 ```
 
 ---
 
-## گروه‌بندی فایل‌ها
+## Grouping Assets
 
-هر دو تابع `assets_add_js` و `assets_add_css` امکان دریافت یک پارامتر دوم را دارند.
+Both `assets_add_js()` and `assets_add_css()` accept an optional second parameter.
 
-پارامتر دوم برای **گروه‌بندی فایل‌ها** استفاده می‌شود.
+The second parameter is used to **group assets**.
 
-برای مثال:
+For example:
 
 ```php
 assets_add_css(
@@ -150,7 +165,7 @@ assets_add_css(
 );
 ```
 
-و:
+And:
 
 ```php
 assets_add_js(
@@ -159,84 +174,63 @@ assets_add_js(
 );
 ```
 
-در این مثال، فایل‌ها در گروه `bootstrap` قرار می‌گیرند.
+Both files are now registered under the `bootstrap` group.
 
-همچنین می‌توانید فایل‌های دیگری را به همین گروه اضافه کنید:
+You can add multiple files to the same group:
 
 ```php
+assets_add_css(
+    public_path('dist/css/bootstrap.css'),
+    'bootstrap'
+);
+
 assets_add_css(
     public_path('dist/css/bootstrap-rtl.css'),
     'bootstrap'
 );
 
-assets_add_css(
-    public_path('dist/css/theme.css'),
-    'bootstrap'
-);
-```
-
-به این ترتیب چند فایل مختلف می‌توانند متعلق به یک گروه باشند.
-
-### مثال کامل
-
-فرض کنید در یک صفحه به فایل‌های زیر نیاز دارید:
-
-```text
-dist/css/bootstrap.css
-dist/css/theme.css
-dist/js/bootstrap.js
-dist/js/app.js
-```
-
-می‌توانید آن‌ها را به شکل زیر ثبت کنید:
-
-```php
-assets_add_css(
-    public_path('dist/css/bootstrap.css'),
-    'bootstrap'
-);
-
-assets_add_css(
-    public_path('dist/css/theme.css'),
-    'theme'
-);
-
 assets_add_js(
     public_path('dist/js/bootstrap.js'),
     'bootstrap'
 );
-
-assets_add_js(
-    public_path('dist/js/app.js'),
-    'app'
-);
 ```
 
-گروه‌بندی باعث می‌شود فایل‌ها بر اساس کاربرد یا بخش مورد نظر مدیریت شوند.
+The group name can be any value that makes sense for your application.
+
+For example:
+
+```php
+'bootstrap'
+'admin'
+'dashboard'
+'auth'
+'editor'
+'datepicker'
+```
 
 ---
 
-## استفاده در Blade
+## Using Assets in Blade
 
-پس از اینکه فایل‌های مورد نیاز صفحه را با `assets_add_js` و `assets_add_css` ثبت کردید، کافی است در فایل Blade آن‌ها را خروجی بگیرید.
+After registering your assets, you can output them in your Blade layout using the following helper functions.
 
-### خروجی CSS
+### CSS
 
-در بخش `<head>` فایل Blade:
+Add the following to the `<head>` section:
 
 ```blade
 {!! assets_css() !!}
 ```
 
-برای مثال:
+Example:
 
 ```blade
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
 
-    <title>My Page</title>
+    <title>My Application</title>
 
     {!! assets_css() !!}
 </head>
@@ -248,15 +242,15 @@ assets_add_js(
 </html>
 ```
 
-### خروجی JavaScript
+### JavaScript
 
-معمولاً قبل از بسته شدن تگ `body`:
+Add the following before the closing `</body>` tag:
 
 ```blade
 {!! assets_js() !!}
 ```
 
-برای مثال:
+Example:
 
 ```blade
 <body>
@@ -264,68 +258,83 @@ assets_add_js(
     ...
 
     {!! assets_js() !!}
+
 </body>
 ```
 
 ---
 
-## استفاده در Controller
+## Using Assets in a Controller
 
-یکی از کاربردهای اصلی پکیج این است که Assetهای مورد نیاز هر صفحه را در Controller مشخص کنید.
-
-برای مثال:
+You can register assets directly from a Controller.
 
 ```php
-public function index()
+<?php
+
+namespace App\Http\Controllers;
+
+class DashboardController extends Controller
 {
-    assets_add_css(
-        public_path('dist/css/bootstrap.css'),
-        'bootstrap'
-    );
+    public function index()
+    {
+        assets_add_css(
+            public_path('dist/css/bootstrap.css'),
+            'bootstrap'
+        );
 
-    assets_add_css(
-        public_path('dist/css/users.css'),
-        'users'
-    );
+        assets_add_js(
+            public_path('dist/js/bootstrap.js'),
+            'bootstrap'
+        );
 
-    assets_add_js(
-        public_path('dist/js/bootstrap.js'),
-        'bootstrap'
-    );
+        assets_add_css(
+            public_path('dist/css/dashboard.css'),
+            'dashboard'
+        );
 
-    assets_add_js(
-        public_path('dist/js/users.js'),
-        'users'
-    );
+        assets_add_js(
+            public_path('dist/js/dashboard.js'),
+            'dashboard'
+        );
 
-    return view('users.index');
+        return view('dashboard');
+    }
 }
 ```
 
-سپس در Layout اصلی:
+Your main Blade layout can then handle the actual output:
 
 ```blade
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    {!! assets_css() !!}
-</head>
 
+    <meta charset="UTF-8">
+
+    <title>Dashboard</title>
+
+    {!! assets_css() !!}
+
+</head>
 <body>
 
     @yield('content')
 
     {!! assets_js() !!}
+
 </body>
+</html>
 ```
 
-در نتیجه، View مربوط به صفحه فقط Assetهای مورد نیاز خودش را ثبت می‌کند و Layout وظیفه خروجی گرفتن از Assetها را بر عهده دارد.
+This keeps page-specific asset registration inside the Controller while keeping the layout clean.
 
 ---
 
-## استفاده در Blade Component
+## Using Assets in Blade Components
 
-می‌توانید Assetهای مربوط به یک Component را مستقیماً داخل Blade Component نیز ثبت کنید.
+Assets can also be registered directly inside a Blade Component.
 
-برای مثال:
+For example:
 
 ```blade
 @php
@@ -345,74 +354,13 @@ public function index()
 </div>
 ```
 
-سپس در Layout:
+If the Component is rendered on a page, its CSS and JavaScript assets will also be registered.
 
-```blade
-{!! assets_css() !!}
-
-...
-
-{!! assets_js() !!}
-```
-
-این روش برای Componentهایی که Asset اختصاصی دارند بسیار کاربردی است؛ زیرا Asset مربوط به Component فقط زمانی به Asset Manager معرفی می‌شود که آن Component در صفحه استفاده شده باشد.
+This is particularly useful for reusable Blade Components that have their own CSS or JavaScript dependencies.
 
 ---
 
-## Merge و Minify
-
-در صورت فعال بودن گزینه `merge` در Configuration:
-
-```php
-'merge' => true,
-```
-
-پکیج می‌تواند فایل‌های ثبت‌شده را مدیریت کرده و فایل‌های مربوط به Assetها را در مسیر تعیین‌شده قرار دهد.
-
-کتابخانه مورد استفاده برای Minify و ترکیب فایل‌ها:
-
-[matthiasmullie/minify](https://github.com/matthiasmullie/minify)
-
-است.
-
-مسیر خروجی از مقدار `path` در Configuration تعیین می‌شود.
-
-برای مثال:
-
-```php
-'path' => 'assets',
-```
-
-ساختار فایل‌های عمومی به شکل زیر خواهد بود:
-
-```text
-public/
-└── assets/
-    ├── css/
-    └── js/
-```
-
----
-
-## پاک‌سازی Cache
-
-پکیج دارای یک Artisan Command برای پاک‌سازی فایل‌های Cache شده Asset Manager است.
-
-در صورت نیاز می‌توانید Command مربوط به پاک‌سازی Cache را از Artisan اجرا کنید.
-
-برای مشاهده Commandهای در دسترس پکیج:
-
-```bash
-php artisan list
-```
-
-و سپس Command مربوط به `assets-manager` را پیدا کنید.
-
----
-
-## نمونه استفاده کامل
-
-یک نمونه ساده از استفاده پکیج در یک پروژه:
+## Complete Example
 
 ### Controller
 
@@ -454,16 +402,15 @@ class DashboardController extends Controller
 
 ```blade
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
-
     <meta charset="UTF-8">
 
     <title>Dashboard</title>
 
     {!! assets_css() !!}
-
 </head>
+
 <body>
 
     @yield('content')
@@ -488,21 +435,21 @@ class DashboardController extends Controller
 @endsection
 ```
 
-در این حالت Controller فایل‌های مورد نیاز صفحه را مشخص می‌کند و Layout بدون نیاز به دانستن جزئیات Assetهای هر صفحه، خروجی CSS و JavaScript را ایجاد می‌کند.
+The Controller registers the assets required by the page, while the layout is responsible for rendering them.
 
 ---
 
 ## API
 
-### `assets_add_js`
+### `assets_add_js()`
 
-ثبت یک فایل JavaScript:
+Register a JavaScript asset:
 
 ```php
 assets_add_js(string $path, ?string $group = null);
 ```
 
-مثال:
+Example:
 
 ```php
 assets_add_js(
@@ -513,15 +460,15 @@ assets_add_js(
 
 ---
 
-### `assets_add_css`
+### `assets_add_css()`
 
-ثبت یک فایل CSS:
+Register a CSS asset:
 
 ```php
 assets_add_css(string $path, ?string $group = null);
 ```
 
-مثال:
+Example:
 
 ```php
 assets_add_css(
@@ -532,9 +479,9 @@ assets_add_css(
 
 ---
 
-### `assets_css`
+### `assets_css()`
 
-دریافت خروجی فایل‌های CSS ثبت‌شده:
+Render all registered CSS assets:
 
 ```blade
 {!! assets_css() !!}
@@ -542,9 +489,9 @@ assets_add_css(
 
 ---
 
-### `assets_js`
+### `assets_js()`
 
-دریافت خروجی فایل‌های JavaScript ثبت‌شده:
+Render all registered JavaScript assets:
 
 ```blade
 {!! assets_js() !!}
@@ -552,11 +499,13 @@ assets_add_css(
 
 ---
 
-## چرا از `public_path()` استفاده می‌شود؟
+## Using `public_path()`
 
-توابع Asset Manager مسیر واقعی فایل را دریافت می‌کنند. به همین دلیل برای فایل‌هایی که داخل `public` قرار دارند، استفاده از `public_path()` پیشنهاد می‌شود.
+The asset registration helpers expect the actual filesystem path of the asset.
 
-برای مثال:
+For files located inside Laravel's `public` directory, it is recommended to use Laravel's `public_path()` helper.
+
+For example:
 
 ```php
 assets_add_js(
@@ -564,21 +513,33 @@ assets_add_js(
 );
 ```
 
-که در یک Laravel Project معمولی به مسیری مشابه زیر اشاره خواهد کرد:
+This resolves to a filesystem path similar to:
 
 ```text
 /path/to/project/public/dist/js/app.js
 ```
 
-این موضوع به Asset Manager اجازه می‌دهد فایل را در سمت سرور پیدا کرده و در صورت نیاز آن را پردازش یا Merge کند.
+This allows the package to locate and process the asset on the server when required.
+
+---
+
+## Cache
+
+Laravel Assets Manager includes an Artisan command for clearing cached assets.
+
+You can see the available commands provided by the package using:
+
+```bash
+php artisan list
+```
+
+Then look for the command related to `assets-manager`.
 
 ---
 
 ## License
 
-این پکیج تحت لایسنس MIT منتشر شده است.
-
-برای اطلاعات بیشتر فایل [LICENSE](LICENSE) را مشاهده کنید.
+This package is open-sourced software licensed under the [MIT license](LICENSE).
 
 ---
 
@@ -589,3 +550,10 @@ Developed by **NovinVision Team**
 Email: novinvision.com@gmail.com
 
 Website: [novinvision.com](https://novinvision.com)
+
+---
+
+## Documentation
+
+- 🇬🇧 **English:** `README.md`
+- 🇮🇷 **فارسی:** [README-fa.md](README-fa.md)
