@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 if (!function_exists('assets_css_files')) {
     function assets_css_files(): \Illuminate\Support\Collection
     {
@@ -14,7 +16,7 @@ if (!function_exists('assets_css_fonts')) {
         $output = collect();
         foreach (assets_css_files() as $collection => $files) {
             if (is_array($files)) foreach ($files as $file) {
-                $file = \App\Helpers\Str::of($file)->beforeLast('?')->replaceMatches('#//[^/]+:\d+#', '')->toString();
+                $file = Str::of($file)->beforeLast('?')->replaceMatches('#//[^/]+:\d+#', '')->toString();
                 preg_match_all('#/fonts/[^)\'" ]+\.(?:woff2?|ttf)(\?[^\s\'")]+)?#', file_get_contents($file), $fonts);
                 foreach ($fonts[0] as $font) {
                     if ($removeVersion) {
